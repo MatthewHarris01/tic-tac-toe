@@ -1,0 +1,466 @@
+<!doctype html>
+<head>
+	<title>Tic-Tac-Toe JavaScript Game Demo</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="Didjiman/Matthew S. Harris JavaScript game Tic-Tac-Toe Page">
+	<meta name="Keywords" content="Matthew Harris, Matthew S Harris, Matthew S. Harris, Didjiman, JavaScript,
+                               MS Access, MS Office, MS Excel, MS Word, VBA, Visual Basic for Applications, VB, Visual Basic, 
+															 Visual Studio, .NET, database, databases, custom software, custom calculator, 
+															 web scraping, didgeridoo, didjeridu, yidaki, yirdaki">
+	<meta name="author" content="Matthew S Harris">
+
+<link rel="stylesheet" type="text/css" href="tictactoe.css">
+
+<script>
+
+var mymark = "";   //this is the mark for player's moves
+var cmpmark = "";  //this is the mark for computers' moves
+var S = [0, 0, 0, 0, 0, 0, 0, 0 , 0];   //array S is 9 elements that represent the 9 squares of the playing board, numbered as shown below:
+// 1 2 3
+// 4 5 6 
+// 7 8 9
+//player marks in the board are represented in the array as 1, computer marks as -1, empty squares with 0
+
+var whoseturn=1;   //flag to keep track of whose turn it is (player or computer)
+
+
+
+function playerwins() {
+   var soutcome = "";
+   var x = document.getElementById("winaudio"); 
+      soutcome = "<u><i>You</i></u> win! (Refresh this page to start a new game!)";
+      document.getElementById("outcome").innerHTML = soutcome;
+	  whoseturn=20;
+      x.play(); //play sound
+}
+
+function computerwins() {
+   var soutcome = "";
+      soutcome = "<i><u>Computer</u></i> wins!! Thanks for the game!! (Refresh this page to start a new game!)";
+	  document.getElementById("outcome").innerHTML = soutcome;
+	  whoseturn=-20;
+     var x = document.getElementById("loseaudio"); 
+     x.play();  //play sound
+}
+
+function turnprompt(x) {
+//if x is -1, display a prompt to user to click the Computer turn button.
+//if x is 1, display a prompt to user to click any empty square on the board.
+   var s = ""; //scratchpad string
+   var pp = document.getElementById("newturn");
+   
+   
+   if (x == -1) {
+      //display prompt to click the Computer Turn button   
+	  s="It is the <u><i>computer's</i></u> turn now, click the 'Computer Turn' button to have the computer take its turn!";
+	  whoseturn = -1;
+//	  pp.play();
+   }
+   if (x == 1) { 
+      //display prompt to click on any empty squre on the board.
+	  s = "Make <i><u>your</u></i> move now (click any empty square to place your marker).";
+	  whoseturn = 1;
+      pp.play();
+   }   
+   document.getElementById("yourturn").innerHTML = s;
+   yourmove(true);
+}
+
+function checkoutcome() {
+//   alert("this is checkoutcome function -- check current outcome of game after most recent move");
+   var soutcome = "game outcome";  //var to store result of testing the game's outcome
+   var t = 8;   //var to store player token -- presume the board is full
+
+   for (i=0; i <= 8; i++) {
+     if (S[i] == 0) {
+	    t=0; //set token to indicate there are still squares to play 
+		} // end "if"
+   } // end "for"
+   
+   if (t==0) {
+	   //there are still open squares to play
+		  soutcome = "game not completed yet. (Refresh this page to start a new game!)";
+		  document.getElementById("outcome").innerHTML = soutcome;
+      //return;   //bail out of this function, we have determined there are still squares to play
+   }
+   else if (t==8) {
+      //the board is full, but there is no winner.
+		  soutcome = "The game is a draw!. (Refresh this page to start a new game!)";
+		  document.getElementById("outcome").innerHTML = soutcome;
+   }
+
+      //need to check for 3 in a row
+	  //start top left corner, check for 3 in a row
+   t = S[0] + S[1] + S[2];
+//   alert("the sum of moves in the top row is: " + t);
+   if (t== -3) {
+      //computer has won!
+	  computerwins();
+	  return; //bail out of this function, we have found a winner
+	  }
+   else if (t==3) {
+	  //player wins!
+	  playerwins();
+      return;   //bail out of this function, we have found a winner
+	  }
+	  else {
+	    //check whether there is a win on the diagonal from square 0
+    	t = S[0] + S[4] + S[8];
+		
+		if (t==-3) {
+		   //computer has won!
+		   computerwins();
+	      return; //bail out of this function, we have found a winner
+		}
+		else if (t ==3){ 
+		   //player has won!
+		   playerwins();
+          return;   //bail out of this function, we have found a winner
+		}
+		else {
+           //check column from cell 0
+           t= S[0] + S[3] + S[6];
+           if (t==-3) {
+              //computer has won!
+              computerwins();
+             return;   //bail out, we have a winner
+                      }
+           else if (t==3) { 
+                    //player has won!
+                    playerwins();
+                    return;  //bail out, we have a winner
+                 }
+           else {
+		   //check column from cell 1
+		   t = S[1] + S[4] + S[7];
+		   if (t==-3) {
+		     //computer has won!
+			 computerwins();
+			 return; //bail out of this function, we have found a winner
+		   }
+		   else if (t==3) {
+		      //player has won!
+			  playerwins();
+                       return;   //bail out of this function, we have found a winner
+		   }
+		   else {
+		      //check column from cell 2
+			  t = S[2] + S[5] + S[8];
+			  if (t==-3) {
+			     //computer wins!
+				 computerwins();
+				 return; //bail out of this function, we have found a winner
+			  }
+			  else if (t==3) {
+			     //player wins!
+				 playerwins();
+				 return;   //bail out of this function, we have found a winner
+			  }
+			  else {
+			     //check diagonal down from cell 2
+				 t= S[2] + S[4] + S[6];
+				 if (t ==-3) { 
+				    //computer win
+					computerwins();
+					return; //bail out of this function, we have found a winner
+				 }
+			  else if (t == 3) {
+			     //player wins
+				 playerwins();
+				 return;   //bail out of this function, we have found a winner
+			  }
+			  else {
+			     //check across from cell 3
+				 t = S[3] + S[4] + S[5];
+				 if (t==-3) {
+				    //computer wins!
+					computerwins();
+					return; //bail out of this function, we have found a winner
+				 }
+				 else if (t==3) {
+				    //player wins
+					playerwins();
+					return;   //bail out of this function, we have found a winner
+				 }
+				 else {
+				    //check across from cell 6
+					t= S[6] + S[7] + S[8];
+					if (t== -3) {
+					   //computer wins!
+					   computerwins();
+					   return; //bail out of this function, we have found a winner
+					}
+					else if (t == 3) {
+					   //player wins!
+					   playerwins();
+					   return;   //bail out of this function, we have found a winner
+					}
+				 }
+			  }
+			  }
+		   }
+		}
+		
+		if (t==8) { 
+		   //no squares left to play, and no wins detected if we get here and t is 8
+		   soutcome = "Game is a draw! (Refresh this page to play nother game!)";
+//		   alert("outcome at this point is: " + soutcome);
+		   document.getElementById("outcome").innerHTML = soutcome;
+		}
+		else { 
+		   //no win, and there are still squares to play
+		   soutcome = "game not completed yet. (Refresh this page to start a new game!)";
+		   document.getElementById("outcome").innerHTML = soutcome;
+		}		
+	  }   
+   } 
+}   //END FUNCTION checkoutcome
+  
+function playermove(cell) { 
+  var xid = "";
+
+   if (whoseturn == -1) {
+     //it is currently the computer's turn!!
+	 alert("It is the computer's turn!! You're not allowed to move yet!! \nClick the Computer Turn button to have the computer take its turn!");
+	 return;  //bail out of this job
+   }
+   else if (whoseturn==-20 || whoseturn==20) {
+		//computer already wont the game!
+		alert("This game has already been won! \nRefresh this page to start a new game!");
+		return; //bail out of this job
+	}
+  
+   xid = cell.toString();
+   var s = document.getElementById(xid).innerHTML;
+
+   //ensure player marks go into empty squares only.
+   if (s != "") {
+      alert("That square is already taken! You may only place a marker in an empty square!! \nPlease try again!");
+   }
+   else {
+      S[cell-1] = 1  //player marks are represented by 1, 0 is empty, computer marks are represented by -1
+      var s = document.getElementById(xid).innerHTML = mymark;
+      yourmove(true);
+
+      document.getElementById("yourturn").innerHTML="Click the 'Computer Move' button for the computer to make its move!";
+	  
+	  turnprompt(-1);  //prompt user to click button for computer turn
+	  yourmove(true);
+	  checkoutcome();   //check the outcome of this move
+   }
+}  //end playermove function
+
+function computermove() { 
+// computer move strategy:
+//if center (5) is not taken, take it
+//if center (5) is not available, try to take one of the corners (1,3,7, or 9)
+//if no corner square is available, try to take one of cells 2, 4, 6, or 8
+//if there are no empty cells, compute whether the game is a win or a draw.
+
+   if (cmpmark==""){
+      alert("ERROR: You must use the 'Select Marker' button to select your playing mark before the computer can take its move! \nTry again");
+	  return; //bail out, no work to be done here
+   }
+   if (whoseturn == 1) {
+     //it is currently the player's turn!!
+	 alert("It is YOUR turn!! the computer is not allowed to move yet!! \nClick any empty square on the board to place your marker in the square!");
+	 return;  //bail out of this job
+	}
+   else if (whoseturn==-20 || whoseturn==20) {
+		//game already has been won the game!
+		alert("This game has already been won! \nRefresh this page to start a new game!");
+		return;
+	}
+
+
+   if (S[5-1] == 0) {
+      S[5-1] = -1  //set value in the array
+      document.getElementById("5").innerHTML = cmpmark;  //put marker on board
+
+   }
+   else {
+      //try cell 1
+      if (S[1-1] == 0) {
+         S[1-1]=-1 //set value in array
+         document.getElementById("1").innerHTML = cmpmark;  //put marker on board
+      }
+      //try cell 3
+      else if (S[3-1] == 0) { 
+         S[3-1] = -1   //set value in array
+         document.getElementById("3").innerHTML = cmpmark;  //put marker on board
+        }
+      //try cell 7
+      else if (S[7-1] == 0) {
+         S[7-1] = -1   //set value in array
+         document.getElementById("7").innerHTML = cmpmark;  //put marker on board
+      }
+      //try cell 9
+      else if (S[9-1] == 0 ) {
+         S[9-1] = -1; //set value in arry
+         document.getElementById("9").innerHTML = cmpmark;  //put marker on board
+      }
+   }
+
+   turnprompt(1); //prompt user to take player turn
+   yourmove(true);
+   checkoutcome();   //check the outcome of this move
+} // END COMPUTER MOVE FUNCTION
+
+function getmark() {
+//get the user's choice for playing mark (X or O)
+
+var endloop = false; //whether to end the input loop
+//NOTE: with Google page ads active, this code does not work, don't call it as the open event of the page!!!
+do {
+   mymark = prompt("Type the symbol you want to use for your moves ('X' or 'O')");
+   mymark = mymark.toUpperCase(mymark);
+   if (mymark === "X") {
+      endloop = true;
+       }
+   else if (mymark === "O") { 
+      endloop = true;
+      }
+if (endloop === false) { 
+   alert("ERROR: You must choose either 'X' or 'O' as the marker for your moves!! \n Please try again!");
+}
+} while (endloop === false);
+
+   if (mymark=="") {
+     mymakr= "X"
+   }
+   if (mymark === "X" ) { cmpmark = "O"; }
+   if (mymark === "O") {cmpmark = "X"; }
+
+   document.getElementById("markinfo").innerHTML = "<b><u><i>Your</i></u></b> marker is: '<b><u><i>" + mymark + 
+      "</b><i></u>' <br>The <b><u><i>computer's</i></u></b> marker is '<b><u><i>" + cmpmark + "</b><i></u>'";
+
+	document.getElementById("cmpmove").disabled = false;
+	
+    turnprompt(-1); //display the prompt that it is the computer's turn
+} // end function getmark
+
+function yourmove(on) {
+   if (on == true) {
+      document.getElementById("yourturn").style.display = "block";   
+   }
+   else {
+      document.getElementById("yourturn").style.display = "none";
+   }
+}   // END FUNCTION yourmove
+
+</script>
+	<!-- FB stuff -->
+	<meta property="fb:admins" content="100005648886426" /> <!-- for FB analytics -->
+<!-- ELEMENTS NEEDED FOR BOTH FACEBOOK LIKE AND SHARE BUTTONS -->
+    <meta property="og:url"           content="http://www.didjiman.com/business/Tic-Tac-Toe.html" />
+    <meta property="og:type"          content="website" />
+    <meta property="og:title"         content="Matthew S Harris - JS Demonstration Apps" />
+    <meta property="og:description"   content="Tic-Tac-Toe game application by Matthew S Harris" />
+    <meta property="og:image"         content="http://www.didjiman.com/images/fbs-biz.jpg" />
+<!-- END OF FACEBOOK Stuff -->
+
+</head>
+
+<body>
+<!-- STUFF FOR GOOGLE ADS -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-2327563481826994",
+          enable_page_level_ads: true
+     });
+</script>
+
+<!-- GOOGLE BANNER AD -->
+<div style="width:970px;height:250px;margin-left:auto;margin-right:auto;">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- jsgame -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:970px;height:250px"
+     data-ad-client="ca-pub-2327563481826994"
+     data-ad-slot="2625067379"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+	<!-- FB stuff -->
+<div id="fb-root" >
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<div> <!-- PLAYING BOARD -->	
+<h1 style="text-align:center;">Tic-Tac-Toe</h1>
+<p style="text-align:center;font-size:10pt;font-style:italic;"><strong>Page design and JavaScript code copyright &copy; 2018 by Matthew S Harris.</strong><br>
+based on a program from the book "BASIC Computer Games", published by Workman Publishing, and copyright 1978 by Creative Computing.</p>
+
+<!-- FB Like & Share -->
+<div style="text-align:center;">
+<div class="fb-like" data-href="http://www.didjiman.com/business/cv-swareJS.htm" data-layout="button_count" 
+data-action="like" data-size="small" data-show-faces="false" data-share="true" style="margin-left:auto;margin-right:auto;">
+</div>
+
+
+<p style="text-align:center;font-weight:bold;">click on an <u><i>empty</i></u> square to make your move (the computer makes the first move)</p>
+<p id="markinfo" style="text-align:center;"></p>
+
+<p id="yourturn" style="text-align:center;font-size:26pt;font-weight:bold;color:red;display:none;">Make your move now (click any empty square to place your marker).</p>
+
+<p style="text-align:center;font-weight:bold;color:red;">First, click the 'Select Marker' button to the right to select your play marker.
+<button id="cmpmove" onclick="getmark();" style="text-align:right;font-weight:bold;" >Select Marker</button>
+</p>
+
+<p style="text-align:center;font-weight:bold;">
+<button id="compmove" onclick="computermove();" style="text-align:right;font-weight:bold;">Computer Turn</button>
+</p>
+
+<table  class="playboard">
+<!-- ROW 1 -->
+<tr>
+<!-- SQUARE 1 -->
+<td id="1" class="playsqLE" onclick="playermove(1);"></td>
+<!-- SQUARE 2 -->
+<td id="2" class="playsqCE" onclick="playermove(2);"></td>
+
+<!-- SQUARE 3 -->
+<td id="3" class ="playsqRE" onclick="playermove(3);"></td>
+</tr>
+
+<tr> <!-- ROW 2 -->
+<!-- SQUARE 4 -->
+<td class="playsqLE" id="4" onclick="playermove(4);"></td>
+<!-- SQUARE 5 -->
+<td class="playsqCE" id="5" onclick="playermove(5);"></td>
+
+<!-- SQUARE 6 -->
+<td class="playsqRE" id="6"  onclick="playermove(6);"></td>
+
+<!-- ROW 3 -->
+<tr>
+<!-- SQUARE 7 -->
+<td class=playsqLE id="7" onclick="playermove(7);"></td>
+
+<!-- SQUARE 8 -->
+<td class=playsqCE id="8"  onclick="playermove(8);"></td>
+
+<!-- SQUARE 9 -->
+<td class=playsqRE id="9" onclick="playermove(9);"></td>
+
+</table>
+<p id="outcome" style ="text-align:center;color:green;font-weight:bold;font-size:26pt;"></p>
+</div> 
+<!-- END OF PLAYING BOARD -->	
+
+
+	
+<!-- resources for end-of-game and new turn sounds -->
+<audio id="loseaudio"><source src="tttlose.mp3" type="audio/mpeg"></audio>
+<audio id="winaudio"><source src="tttwin.mp3" type="audio/mpeg"></audio>
+<audio id="newturn"><source src="chime.mp3" type="audio/mpeg"></audio>
+
+</body>
+</html>
